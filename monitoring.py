@@ -1,45 +1,71 @@
+import sys
 import psutil
-import time
-import os
+from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget
+from PyQt5.QtCore import QTimer, Qt
+from PyQt5.QtGui import QFont, QColor, QPalette
 
-def clear_screen():
-    """Ekrani temizler."""
-    os.system('cls' if os.name == 'nt' else 'clear')
+class SystemMonitor(QMainWindow):
+    def __init__(self):
+        super().__init__()
 
-def system_monitor():
-    while True:
-        clear_screen()
+        self.setWindowTitle("System Performance Monitor")
+        self.setGeometry(100, 100, 400, 300)
 
-        # CPU Kullanimi
-        print(f"CPU Kullanimi: {psutil.cpu_percent(interval=1)}%")
-        print(f"Her bir çekirdek kullanimi: {psutil.cpu_percent(interval=1, percpu=True)}")
+        # Main Widget
+        self.widget = QWidget(self)
+        self.setCentralWidget(self.widget)
 
-        # RAM Kullanimi
-        memory = psutil.virtual_memory()
-        print(f"RAM Kullanimi: {memory.percent}%")
-        print(f"Kullanilan RAM: {memory.used / (1024 ** 3):.2f} GB")
-        print(f"Toplam RAM: {memory.total / (1024 ** 3):.2f} GB")
+        # Layout
+        self.layout = QVBoxLayout(self.widget)
+        self.layout.setAlignment(Qt.AlignCenter)
 
-        # Disk Kullanimi
-        disk = psutil.disk_usage('/')
-        print(f"Disk Kullanimi: {disk.percent}%")
-        print(f"Kullanilan Disk: {disk.used / (1024 ** 3):.2f} GB")
-        print(f"Toplam Disk: {disk.total / (1024 ** 3):.2f} GB")
+        # Labels for CPU, RAM, Disk Usage
+        self.cpu_label = QLabel(self)
+        self.ram_label = QLabel(self)
+        self.disk_label = QLabel(self)
 
-        # Ağ Bilgileri
-        net = psutil.net_io_counters()
-        print(f"Toplam Gönderilen: {net.bytes_sent / (1024 ** 2):.2f} MB")
-        print(f"Toplam Alinan: {net.bytes_recv / (1024 ** 2):.2f} MB")
+        # Set font and style for labels
+        font = QFont("Arial", 16, QFont.Bold)
+        self.cpu_label.setFont(font)
+        self.ram_label.setFont(font)
+        self.disk_label.setFont(font)
 
-        # İşlemler ve Çekirdek Bilgisi
-        print(f"Toplam Çekirdek Sayisi: {psutil.cpu_count(logical=False)}")
-        print(f"Toplam Mantiksal İşlemci: {psutil.cpu_count(logical=True)}")
+        # Set color palette for labels
+        palette = QPalette()
+        palette.setColor(QPalette.WindowText, QColor(255, 255, 255))
+        self.cpu_label.setPalette(palette)
+        self.ram_label.setPalette(palette)
+        self.disk_label.setPalette(palette)
 
-        # 2 saniye bekle
-        time.sleep(5)
+        # Add labels to layout
+        self.layout.addWidget(self.cpu_label)
+        self.layout.addWidget(self.ram_label)
+        self.layout.addWidget(self.disk_label)
+
+        # Set background color
+        self.setStyleSheet("background-color: #2E3440;")
+
+        # Timer to update the metrics
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_metrics)
+        self.timer.start(1000)  # Update every second
+
+        # Initial update
+        self.update_metrics()
+
+    def update_metrics(self):
+        # Get system performance metrics
+        cpu_usage = psutil.cpu_percent()
+        ram_usage = psutil.virtual_memory().percent
+        disk_usage = psutil.disk_usage('/').percent
+
+        # Update labels
+        self.cpu_label.setText(f"CPU Usage: {cpu_usage}%")
+        self.ram_label.setText(f"RAM Usage: {ram_usage}%")
+        self.disk_label.setText(f"Disk Usage: {disk_usage}%")
 
 if __name__ == "__main__":
-    try:
-        system_monitor()
-    except KeyboardInterrupt:
-        print("\nSistem monitörü kapatildi.")
+    app = QApplication(sys.argv)
+    window = SystemMonitor()
+    window.show()
+    sys.exit(app.exec_())
