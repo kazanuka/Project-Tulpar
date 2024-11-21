@@ -14,22 +14,22 @@ class SystemMonitor(QMainWindow):
         # Main Widget
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
-
-        # Layout
+        
+         # Layout
         self.layout = QVBoxLayout(self.widget)
-        self.layout.setAlignment(Qt.AlignCenter)
-
+        self.layout.setAlignment(Qt.AlignTop)
+        
         # Labels for CPU, RAM, Disk Usage
         self.cpu_label = QLabel(self)
         self.ram_label = QLabel(self)
         self.disk_label = QLabel(self)
-
+        
         # Set font and style for labels
         font = QFont("Arial", 16, QFont.Bold)
         self.cpu_label.setFont(font)
         self.ram_label.setFont(font)
         self.disk_label.setFont(font)
-
+        
         # Set color palette for labels
         palette = QPalette()
         palette.setColor(QPalette.WindowText, QColor(255, 255, 255))
@@ -57,12 +57,16 @@ class SystemMonitor(QMainWindow):
         # Get system performance metrics
         cpu_usage = psutil.cpu_percent()
         ram_usage = psutil.virtual_memory().percent
-        disk_usage = psutil.disk_usage('/').percent
+        disk_percent = psutil.disk_usage('/').percent
+        disk_free = psutil.disk_usage('/').free
+
+        disk_free /= 1024 ** 3
 
         # Update labels
         self.cpu_label.setText(f"CPU Usage: {cpu_usage}%")
         self.ram_label.setText(f"RAM Usage: {ram_usage}%")
-        self.disk_label.setText(f"Disk Usage: {disk_usage}%")
+        self.disk_label.setText(f"Disk Usage: {disk_percent}%")
+        self.disk_label.setText(f"Disk Free: {disk_free:.2f} GB")
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
