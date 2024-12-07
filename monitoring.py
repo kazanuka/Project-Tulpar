@@ -27,7 +27,7 @@ class SystemMonitor(QMainWindow):
         self.disk_label = QLabel(self)
 
         # Open Files Display
-        self.open_files_label = QLabel("Open Files:")
+        self.open_files_label = QLabel("Açık Dosyalar ve Processler:")
         self.open_files_text = QTextEdit(self)
         self.open_files_text.setReadOnly(True)
 
@@ -71,12 +71,10 @@ class SystemMonitor(QMainWindow):
         disk_usage = psutil.disk_usage('/').percent
         disk_free = psutil.disk_usage('/').free / 1024 ** 3
 
-        # Update labels
-        self.cpu_label.setText(f"CPU Usage: {cpu_usage}%")
-        self.ram_label.setText(f"RAM Usage: {ram_usage}%")
-        self.disk_label.setText(f"Disk Usage: {disk_usage}%, Free: {disk_free:.2f} GB")
+        self.cpu_label.setText(f"CPU Kullanımı: {cpu_usage}%")
+        self.ram_label.setText(f"Bellek Kullanımı: {ram_usage}%")
+        self.disk_label.setText(f"Disk Kullanımı: {disk_usage}%, {disk_free:.2f} GB Boş")
 
-        # Get open files info
         open_files = self.get_open_files_info()
         self.open_files_text.setText(open_files)
 
@@ -87,7 +85,7 @@ class SystemMonitor(QMainWindow):
             try:
                 files = proc.open_files()
                 if files:
-                    open_files_list.append(f"Process ID: {proc.info['pid']} | Process Name: {proc.info['name']} | Open Files:\n")
+                    open_files_list.append(f"Process ID: {proc.info['pid']} | Process İsmi: {proc.info['name']} | Açık Dosyalar:\n")
                     for file in files:
                         open_files_list.append(f"    {file.path}")
                     open_files_list.append("\n**********************************************************************************")
