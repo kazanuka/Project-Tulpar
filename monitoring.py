@@ -13,32 +13,32 @@ class SystemMonitor(QMainWindow):
         self.setWindowTitle("System Performance Monitor")
         self.setGeometry(100, 100, 600, 800)
 
-        # Ana widget
+        # Main Widget
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
 
-        # Arayüz
+        # Layout
         self.layout = QVBoxLayout(self.widget)
         self.layout.setAlignment(Qt.AlignTop)
 
-        # Labels for CPU, RAM, Disk Kullanımı
+        # Labels for CPU, RAM, Disk Usage
         self.cpu_label = QLabel(self)
         self.ram_label = QLabel(self)
         self.disk_label = QLabel(self)
 
-        #Açık dosyaları göster
-        self.open_files_label = QLabel("Açık Dosyalar ve Processler:")
+        # Open Files Display
+        self.open_files_label = QLabel("Open Files:")
         self.open_files_text = QTextEdit(self)
         self.open_files_text.setReadOnly(True)
 
-        # Font ayarları
+        # Set font and style for labels
         font = QFont("Arial", 14, QFont.Bold)
         self.cpu_label.setFont(font)
         self.ram_label.setFont(font)
         self.disk_label.setFont(font)
         self.open_files_label.setFont(font)
 
-        # Renk ayarları
+        # Set color palette for labels
         palette = QPalette()
         palette.setColor(QPalette.WindowText, QColor(0, 0, 0))
         self.cpu_label.setPalette(palette)
@@ -46,7 +46,7 @@ class SystemMonitor(QMainWindow):
         self.disk_label.setPalette(palette)
         self.open_files_label.setPalette(palette)
 
-        # Widgetları arayüze ekliyorum.
+        # Widgetları arayüze ekliyoru
         self.layout.addWidget(self.cpu_label)
         self.layout.addWidget(self.ram_label)
         self.layout.addWidget(self.disk_label)
@@ -71,10 +71,10 @@ class SystemMonitor(QMainWindow):
         disk_usage = psutil.disk_usage('/').percent
         disk_free = psutil.disk_usage('/').free / 1024 ** 3
 
-        # Verileri güncelle
-        self.cpu_label.setText(f"CPU Kullanımı: {cpu_usage}%")
-        self.ram_label.setText(f"RAM Kullanımı: {ram_usage}%")
-        self.disk_label.setText(f"Disk Kullanımı: {disk_usage}%, {disk_free:.2f} GB Boş")
+        # Update labels
+        self.cpu_label.setText(f"CPU Usage: {cpu_usage}%")
+        self.ram_label.setText(f"RAM Usage: {ram_usage}%")
+        self.disk_label.setText(f"Disk Usage: {disk_usage}%, Free: {disk_free:.2f} GB")
 
         # Get open files info
         open_files = self.get_open_files_info()
@@ -87,9 +87,10 @@ class SystemMonitor(QMainWindow):
             try:
                 files = proc.open_files()
                 if files:
-                    open_files_list.append(f"Process ID: {proc.info['pid']} | Process Name: {proc.info['name']} | Open Files:")
+                    open_files_list.append(f"Process ID: {proc.info['pid']} | Process Name: {proc.info['name']} | Open Files:\n")
                     for file in files:
                         open_files_list.append(f"    {file.path}")
+                    open_files_list.append("\n**********************************************************************************")
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
 
