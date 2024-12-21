@@ -1,14 +1,14 @@
-import sys
-import psutil
+import sys # Sistem kütüphanesi
+import psutil # Sistem bilgilerini aldığımız kütüphane
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QVBoxLayout, QWidget, QProgressBar, QLineEdit, \
-    QTableWidget, QTableWidgetItem, QTabWidget
+    QTableWidget, QTableWidgetItem, QTabWidget # PyQt5 ek kütüphneleri
 from PyQt5.QtCore import QTimer, Qt
 from PyQt5.QtGui import QFont, QColor, QPalette
 import pyqtgraph as pg
 
 
 class SystemMonitor(QMainWindow):
-    def __init__(self):
+    def __init__(self):  #Constructor fonksiyonu
         super().__init__()
         self.setWindowTitle("Sistem Monitörü")
         self.setGeometry(100, 100, 800, 600)
@@ -24,10 +24,10 @@ class SystemMonitor(QMainWindow):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_metrics)
-        self.timer.start(2000)
+        self.timer.start(3000)
         self.update_metrics()
 
-    def setup_system_info_tab(self):
+    def setup_system_info_tab(self): # Sistem bilgilerini bu sekmede gösteriyorum
         layout = QVBoxLayout(self.system_info_tab)
         self.setStyleSheet("background-color: #2e3b4e; color: #ffffff;")
         font = QFont("Arial", 12)
@@ -62,7 +62,7 @@ class SystemMonitor(QMainWindow):
         layout.addWidget(self.search_bar)
         layout.addWidget(self.process_table)
 
-    def setup_graphs_tab(self):
+    def setup_graphs_tab(self):# Grafiklerin oluşturulması
         layout = QVBoxLayout(self.graphs_tab)
 
         self.cpu_graph, self.ram_graph, self.disk_graph = pg.PlotWidget(title="CPU Kullanımı"), pg.PlotWidget(
@@ -79,7 +79,7 @@ class SystemMonitor(QMainWindow):
 
         self.cpu_data, self.ram_data, self.disk_data, self.x_data = [], [], [], []
 
-    def customize_progress_bar(self, progress_bar):
+    def customize_progress_bar(self, progress_bar):#Progress bar özellikleri
         progress_bar.setStyleSheet(
             """QProgressBar { border: 1px solid #3c4f65; border-radius: 5px; text-align: center; background-color: #3c4f65; }
                QProgressBar::chunk { background-color: #5cb85c; width: 20px; }"""
@@ -87,7 +87,7 @@ class SystemMonitor(QMainWindow):
         progress_bar.setTextVisible(True)
         progress_bar.setFixedHeight(25)
 
-    def update_metrics(self):
+    def update_metrics(self):#Asıl işlemlerin yapıldığı fonksiyon
         cpu_usages = psutil.cpu_percent(interval=1, percpu=True)
         cpu_usage_avg = sum(cpu_usages) / len(cpu_usages)
         self.cpu_bar.setValue(int(cpu_usage_avg))
@@ -129,14 +129,14 @@ class SystemMonitor(QMainWindow):
         self.ram_graph.plot(self.x_data, self.ram_data, pen=pg.mkPen('c'), clear=True)
         self.disk_graph.plot(self.x_data, self.disk_data, pen=pg.mkPen('m'), clear=True)
 
-    def search_process(self):
+    def search_process(self): # Process arama
         search_text = self.search_bar.text().lower()
         for row in range(self.process_table.rowCount()):
             process_name = self.process_table.item(row, 1).text().lower()
             if search_text in process_name:
                 self.process_table.selectRow(row)
                 return
-        self.process_table.clearSelection()  # Eşleşme yoksa seçimi temizle
+        self.process_table.clearSelection()  
 
 
 if __name__ == "__main__":

@@ -1,6 +1,4 @@
-#!/bin/sh
-'''exec' "/home/fk/Desktop/Project Tulpar/.myenv/bin/python3" "$0" "$@"
-' '''
+#!/home/fk/Desktop/Project-Tulpar/.myenv/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
