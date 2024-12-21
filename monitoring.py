@@ -24,7 +24,7 @@ class SystemMonitor(QMainWindow):
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_metrics)
-        self.timer.start(3000)
+        self.timer.start(500)
         self.update_metrics()
 
     def setup_system_info_tab(self): # Sistem bilgilerini bu sekmede gösteriyorum
@@ -87,17 +87,15 @@ class SystemMonitor(QMainWindow):
         progress_bar.setTextVisible(True)
         progress_bar.setFixedHeight(25)
 
-    def update_metrics(self):#Asıl işlemlerin yapıldığı fonksiyon
-        cpu_usages = psutil.cpu_percent(interval=1, percpu=True)
-        cpu_usage_avg = sum(cpu_usages) / len(cpu_usages)
+    def update_metrics(self): # Asıl işlemlerin yapıldığı fonksiyon
+        cpu_usage_avg = psutil.cpu_percent(interval=1, percpu=False)
         self.cpu_bar.setValue(int(cpu_usage_avg))
         self.cpu_label.setText(f"CPU Kullanımı: {cpu_usage_avg:.1f}%")
 
         ram_usage = psutil.virtual_memory().percent
-        ram_free = psutil.virtual_memory().free /1024 ** 3
-        ram_using = psutil.virtual_memory().used /1024 ** 3
+        ram_free = psutil.virtual_memory().free / 1024 ** 3
+        ram_using = psutil.virtual_memory().used / 1024 ** 3
         ram_total = psutil.virtual_memory().total / 1024 ** 3
-
 
         self.ram_bar.setValue(int(ram_usage))
         self.ram_label.setText(f"RAM Kullanımı: {ram_usage:.1f}%, {ram_free:.1f} GB Boş, {ram_using:.1f} GB Kullanılıyor")
